@@ -1,0 +1,9 @@
+FROM debian
+
+RUN apt-get update && \
+  apt-get install -y \
+  curl
+
+COPY ./myscript.sh /myfiles/myscript.sh
+
+CMD ["/bin/sh", "-c", "/myfiles/myscript.sh"]

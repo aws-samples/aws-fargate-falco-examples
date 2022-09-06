@@ -1,0 +1,3 @@
+# Spellcheck
+# docker run --rm -ti -v $(pwd):/workdir tmaier/markdown-spellcheck:latest "**/*.md"
+.spelling

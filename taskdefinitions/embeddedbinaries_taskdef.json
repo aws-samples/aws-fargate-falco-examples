@@ -1,0 +1,95 @@
+{
+    "family": "falcoembeddedbinaries",
+    "taskRoleArn": "arn:aws:iam::111222333444:role/ECSTaskFalcoRole",
+    "executionRoleArn": "arn:aws:iam::111222333444:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "init",
+            "image": "public.ecr.aws/h5g3j1b0/ecs-configmap:v0.7",
+            "essential": false,
+            "environment": [
+                {
+                    "name": "S3_BUCKET_FILE_1",
+                    "value": "falcotestbucket123"
+                },
+                {
+                    "name": "SRC_FILE_PATH_FILE_1",
+                    "value": "eb_falco.yaml"
+                },
+                {
+                    "name": "DEST_FILE_PATH_FILE_1",
+                    "value": "/data/falco.yaml"
+                },
+                {
+                    "name": "S3_BUCKET_FILE_2",
+                    "value": "falcotestbucket123"
+                },
+                {
+                    "name": "SRC_FILE_PATH_FILE_2",
+                    "value": "falco_rules.local.yaml"
+                },
+                {
+                    "name": "DEST_FILE_PATH_FILE_2",
+                    "value": "/data/falco_rules.local.yaml"
+                }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "configfiles",
+                    "containerPath": "/data",
+                    "readOnly": false
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/aws/ecs/service/embeddedbinaries",
+                    "awslogs-region": "eu-west-1",
+                    "awslogs-stream-prefix": "init"
+                }
+            }
+        },
+        {
+            "name": "embeddedbinaries",
+            "image": "111222333444.dkr.ecr.eu-west-1.amazonaws.com/falco:embeddedbinaries",
+            "essential": true,
+            "mountPoints": [
+                {
+                    "sourceVolume": "configfiles",
+                    "containerPath": "/data",
+                    "readOnly": true
+                }
+            ],
+            "linuxParameters": {
+                "capabilities": {
+                    "add": [
+                        "SYS_PTRACE"
+                    ]
+                }
+            },
+            "dependsOn": [
+                {
+                    "containerName": "init",
+                    "condition": "SUCCESS"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/aws/ecs/service/embeddedbinaries",
+                    "awslogs-region": "eu-west-1",
+                    "awslogs-stream-prefix": "embeddedbinaries"
+                }
+            }
+        }
+    ],
+    "volumes": [
+        {
+            "name": "configfiles",
+            "host": {}
+        }
+    ],
+    "cpu": "256",
+    "memory": "512"
+}

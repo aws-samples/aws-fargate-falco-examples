@@ -1,0 +1,32 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+####################
+# Your custom rules!
+####################
+- rule: Detect bash in a container
+  desc: You shouldn’t have a shell run in a container
+  condition: proc.name = bash
+  output: Bash ran inside a container (user=%user.name command=%proc.cmdline %container.info)
+  priority: INFO
+
+- rule: write_binary_dir
+  desc: an attempt to write to any file below a set of binary directories
+  condition: open_write and not proc.name in (package_mgmt_binaries) and bin_dir
+  output: "File below a known binary directory opened for writing (user=%user.name command=%proc.cmdline file=%fd.name)"
+  priority: WARNING
+
+- macro: outbound_corp
+  condition: >
+    (((evt.type = connect and evt.dir=<) or
+      (evt.type in (sendto,sendmsg) and evt.dir=< and
+       fd.l4proto != tcp and fd.connected=false and fd.name_changed=true)) and
+     (fd.typechar = 4 or fd.typechar = 6) and
+     (fd.ip != "0.0.0.0" and fd.net != "127.0.0.0/8") and
+     (evt.rawres >= 0 or evt.res = EINPROGRESS))
+
+- rule: outbound connection
+  desc: Container attempted to connect to the outer world
+  condition: outbound_corp
+  output: "Outbound network traffic connection (srcip=%fd.cip dstip=%fd.sip dstport=%fd.sport proto=%fd.l4proto procname=%proc.name)"
+  priority: WARNING

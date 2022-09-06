@@ -1,0 +1,10 @@
+FROM debian
+
+RUN apt-get update && \
+  apt-get install -y \
+  curl
+
+COPY --from=falcosecurity/falco-userspace:latest /vendor/falco/bin/pdig /vendor/falco/bin/pdig
+COPY ./myscript.sh  /vendor/falco/scripts/myscript.sh
+
+CMD ["/vendor/falco/bin/pdig", "/bin/bash", "/vendor/falco/scripts/myscript.sh"]

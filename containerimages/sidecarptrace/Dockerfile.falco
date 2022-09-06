@@ -1,0 +1,6 @@
+FROM debian
+
+COPY --from=falcosecurity/falco:0.32.2-slim      /usr/bin/falco         /vendor/falco/bin/falco
+COPY --from=falcosecurity/falco:0.32.2-slim      /etc/falco/            /vendor/falco/etc/falco/
+
+CMD ["/vendor/falco/bin/falco", "--userspace", "-c", "/data/falco.yaml"]
