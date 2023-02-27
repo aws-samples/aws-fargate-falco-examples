@@ -21,7 +21,7 @@ do
     sleep 10
 
     echo "hitting google"
-    curl https://google.co.uk
+    curl -s https://google.co.uk
 
     sleep 10
 
@@ -29,4 +29,9 @@ do
     cat /root/bash_history
 
     sleep 10
+
+    echo "cleanup"
+    rm -r /tmp/testerrr
+    rm /usr/bin/tester2
+
 done
