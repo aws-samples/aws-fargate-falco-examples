@@ -189,7 +189,17 @@ You can verify that the Falco logs are coming through, either by checking the
 Amazon CloudWatch Console, or by using the `aws logs get-log-events` command.
 
 ```
-$ aws logs get-log-events --log-group-name /aws/ecs/service/launcher_falco_alerts --log-stream-name c4bc416d81aaadcd9b8a53e78e0e9f8c636e35535b565bd2d50145b3117ba29a.0
+$ $ aws logs describe-log-streams --log-group-name /aws/ecs/service/falco_alerts
+{
+    "logStreams": [
+        {
+            "logStreamName": "ac55c5101a0839df67be4569ce175608d0e22cd1d7e4e08e249a3c2788f9a852.0",
+            ...
+        }
+    ]
+}
+
+$ aws logs get-log-events --log-group-name /aws/ecs/service/falco_alerts --log-stream-name ac55c5101a0839df67be4569ce175608d0e22cd1d7e4e08e249a3c2788f9a852.0
 {
     "events": [
         {
