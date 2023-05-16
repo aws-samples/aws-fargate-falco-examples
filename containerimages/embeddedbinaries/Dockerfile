@@ -5,7 +5,7 @@ RUN apt-get update && \
   supervisor \
   curl
 
-COPY --from=ollypom/pdig:latest /pdig /vendor/falco/bin/pdig
+COPY --from=falcosecurity/falco-userspace@sha256:d03e61680b6789a5f2b5552ac3075873a0d511d4905cb0cf979889fbf3b4bab1 /vendor/falco/bin/pdig /vendor/falco/bin/pdig
 COPY --from=falcosecurity/falco:0.32.2-slim      /usr/bin/falco         /vendor/falco/bin/falco
 COPY --from=falcosecurity/falco:0.32.2-slim      /etc/falco/            /vendor/falco/etc/falco/
 COPY ./myscript.sh             /vendor/falco/scripts/myscript.sh

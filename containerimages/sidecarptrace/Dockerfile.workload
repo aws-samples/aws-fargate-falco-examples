@@ -4,7 +4,7 @@ RUN apt-get update && \
   apt-get install -y \
   curl
 
-COPY --from=ollypom/pdig:latest /pdig /vendor/falco/bin/pdig
+COPY --from=falcosecurity/falco-userspace@sha256:d03e61680b6789a5f2b5552ac3075873a0d511d4905cb0cf979889fbf3b4bab1 /vendor/falco/bin/pdig /vendor/falco/bin/pdig
 COPY ./myscript.sh  /vendor/falco/scripts/myscript.sh
 
 CMD ["/vendor/falco/bin/pdig", "/bin/bash", "/vendor/falco/scripts/myscript.sh"]
